@@ -11,12 +11,35 @@ services:
     volumes:
       - mysql-data-3:/var/lib/mysql
 
+  mysql_test:
+    image: mysql:5.7
+    restart: always
+    env_file:
+      - .env.test.mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
+    volumes:
+      - mysql-data-test:/var/lib/mysql
+
   backend:
     build: ./backend
     ports:
       - "3000:3000"
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    mem_limit: 2g
+    mem_reservation: 256m
+    working_dir: /usr/src/app
+    env_file:
+      - .env.backend
     depends_on:
       - mysql
+    stdin_open: true
+    tty: true
+    command: sh
     networks:
       - app-network
 
@@ -24,17 +47,22 @@ services:
     build:
       context: ./frontend
       dockerfile: dev.Dockerfile
+    volumes:
+      - ./frontend:/usr/src/fe/app
+      - fe_node_modules:/usr/src/fe/app/node_modules
     ports:
       - "5000:5000"
+    working_dir: /usr/src/fe/app
     env_file:
       - .env.frontend
     depends_on:
       - mysql
       - backend
+    stdin_open: true
+    tty: true
+    command: sh
     networks:
       - app-network
-    volumes:
-      - ./frontend:/app
 
 networks:
   app-network:
@@ -42,3 +70,5 @@ networks:
 
 volumes:
   mysql-data-3:
+  mysql-data-test:
+  fe_node_modules:

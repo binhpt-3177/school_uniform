@@ -1,12 +1,8 @@
 FROM node:16
 
-WORKDIR /app
+WORKDIR /usr/src/fe/app
 
-COPY . .
-
+COPY package*.json ./
 RUN npm install
 
 EXPOSE 5000
-
-# Chạy ứng dụng
-CMD ["npm", "run", "start"]

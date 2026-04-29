@@ -1,11 +1,9 @@
-FROM node:16
+FROM node:18
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY . .
-
+# Cài đặt thư viện
+COPY package*.json ./
 RUN npm install
 
 EXPOSE 3000
-
-CMD ["npm", "run", "start:dev"]

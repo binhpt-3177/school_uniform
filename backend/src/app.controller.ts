@@ -9,7 +9,7 @@ export class AppController {
   @ApiOperation({ description: 'Welcome' })
   @Get()
   root(): string {
-    return `<h3>Welcome to Test API</h3>
+    return `<h3>Welcome to Test API 2</h3>
             <br/>Checkout the <a href="docs">API Docs</a>
             <br/><br/><hr><code>Version: ${this.appService.getVersion()}</code>`;
   }

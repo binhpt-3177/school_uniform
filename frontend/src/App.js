@@ -299,7 +299,7 @@ function App() {
       </div>
 
       <div className="card mt-3">
-        <div className="card-header">React Fetch PUT - BezKoder.com</div>
+        <div className="card-header">React Fetch PUT 2 - BezKoder.com</div>
         <div className="card-body">
           <div className="form-group">
             <input type="text" className="form-control" ref={put_id} placeholder="Id" />
