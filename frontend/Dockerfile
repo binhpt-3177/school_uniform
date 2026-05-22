@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -6,8 +6,7 @@ COPY . .
 
 RUN npm install
 
-
 EXPOSE 5000
 
-# Chạy ứng dụng
-CMD ["npm", "run", "start"]
+# Vite dev server
+CMD ["npm", "run", "dev"]

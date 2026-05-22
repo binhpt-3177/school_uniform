@@ -1,0 +1,79 @@
+name: Deploy Frontend to GitHub Pages
+
+on:
+  # Trigger on push to the main/develop branch
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'frontend/**'
+  # Allow manual trigger from the Actions tab
+  workflow_dispatch:
+    inputs:
+      base_path:
+        description: >
+          URL sub-path for the deployment (e.g. /be-fe-db-example/).
+          Leave empty to use the default from the repository variable BASE_PATH.
+        required: false
+        default: ''
+
+# Allow only one concurrent deployment; cancel in-progress runs
+concurrency:
+  group: gh-pages-deploy
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Resolve BASE_PATH priority:
+      #   1. Manual dispatch input (if provided)
+      #   2. Repository variable BASE_PATH (Settings → Variables → Actions)
+      #   3. Empty string → Vite base defaults to '/' (no sub-path)
+      - name: Resolve BASE_PATH
+        id: resolve_base
+        run: |
+          INPUT_BASE="${{ github.event.inputs.base_path }}"
+          REPO_BASE="${{ vars.BASE_PATH }}"
+
+          if [ -n "$INPUT_BASE" ]; then
+            FINAL_BASE="$INPUT_BASE"
+          elif [ -n "$REPO_BASE" ]; then
+            FINAL_BASE="$REPO_BASE"
+          else
+            FINAL_BASE=""
+          fi
+
+          echo "base_path=$FINAL_BASE" >> "$GITHUB_OUTPUT"
+          echo "Resolved BASE_PATH: '$FINAL_BASE'"
+
+      - name: Build
+        env:
+          BASE_PATH: ${{ steps.resolve_base.outputs.base_path }}
+        run: npm run build
+
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./frontend/build
+          # Keep existing files not part of this build (e.g. CNAME)
+          keep_files: false
