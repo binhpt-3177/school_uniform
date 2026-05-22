@@ -1,0 +1,11 @@
+{
+  "app_name": "School Uniform",
+  "welcome": "Chào {{email}}",
+  "language": "Ngôn ngữ",
+  "languages": {
+    "en": "English",
+    "vi": "Tiếng Việt"
+  },
+  "loading": "Đang tải…",
+  "unknown_error": "Đã xảy ra lỗi. Vui lòng thử lại."
+}

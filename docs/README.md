@@ -1,6 +1,6 @@
 # School Uniform — Documentation Index
 
-School Uniform is a NestJS 11 + TypeORM + MySQL 8 backend paired with a React 17 (CRA) frontend, orchestrated with Docker Compose. It provides a base architecture for a school uniform management system: authentication, user management, and a pluggable module structure.
+School Uniform is a NestJS 11 + TypeORM + MySQL 8 backend paired with a React 19 + Vite frontend, orchestrated with Docker Compose. It provides a base architecture for a school uniform management system: authentication, user management, and a pluggable module structure.
 
 ## Audience Signposts
 

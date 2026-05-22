@@ -8,17 +8,16 @@
     <meta name="description" content="School Uniform — React 19 + Vite frontend" />
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-    />
     <title>School Uniform</title>
   </head>
   <body>
     <!-- Runtime env injected by entrypoint.sh into /env.js BEFORE the app bundle loads.
-         %BASE_URL% is replaced by Vite at build time with the configured base path,
+         Loaded via document.write so Vite's HTML scanner skips it (no bundle warning).
+         %BASE_URL% is replaced at build time with the configured base path,
          so this works for both Docker (base='/') and GitHub Pages (base='/repo-name/'). -->
-    <script src="%BASE_URL%env.js"></script>
+    <script>
+      document.write('<script src="%BASE_URL%env.js"><\/script>');
+    </script>
 
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>

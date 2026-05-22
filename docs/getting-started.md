@@ -53,7 +53,7 @@ Edit each file and replace placeholder secrets (JWT secrets, passwords) before f
 |----------|---------|
 | `PORT` | Dev server port (default `5000`) |
 
-> Note: At runtime (production Nginx build) the frontend reads `REACT_APP_API_URL` injected by `entrypoint.sh` into `window.env`. Set this in `.env.frontend` for the dev container if needed.
+> Note: At runtime (production Nginx build) the frontend reads `REACT_APP_API_URL` injected by `entrypoint.sh` into `window.env`. In the Vite dev container the API URL falls back to `http://localhost:3000` (see `frontend/src/lib/http.js`).
 
 ### MySQL env vars (`.env.mysql` / `.env.test.mysql`)
 
@@ -95,7 +95,15 @@ docker compose exec backend npm run migration:run
 docker compose exec backend npm run console -- seed
 ```
 
-## 5. Verify the Stack
+## 5. Run Frontend Tests (Optional)
+
+```bash
+docker compose exec frontend npm test
+```
+
+All 84 vitest tests should pass. Tests are co-located with source files (`*.test.jsx` / `*.test.js`).
+
+## 6. Verify the Stack
 
 ```bash
 # Health check

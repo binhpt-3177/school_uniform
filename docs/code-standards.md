@@ -8,7 +8,7 @@ Applies to all code merged into this repository. A reviewer may reject a PR for 
 
 1. [Cross-cutting Rules](#1-cross-cutting-rules)
 2. [Backend — NestJS 11 + TypeORM](#2-backend--nestjs-11--typeorm)
-3. [Frontend — React 17 + CRA](#3-frontend--react-17--cra)
+3. [Frontend — React 19 + Vite + Tailwind v4](#3-frontend--react-19--vite--tailwind-v4)
 4. [Testing](#4-testing)
 5. [Git & CI](#5-git--ci)
 
@@ -219,23 +219,20 @@ Never read `process.env` directly in feature code. Use `ConfigService` from `@ne
 
 ---
 
-## 3. Frontend — React 17 + CRA
+## 3. Frontend — React 19 + Vite + Tailwind v4
+
+**Stack:** React 19, Vite 8, Tailwind CSS v4 (via `@tailwindcss/vite`), react-router-dom v7, react-hook-form + zod, react-i18next.
 
 ### 3.1 Component Rules
 
 - **Functional components only.** No class components.
 - One component per file.
-- Component name: PascalCase (`UserCard`). Filename: kebab-case (`user-card.jsx` or `user-card.tsx`).
-- Props interface/type: `<ComponentName>Props`.
+- Component name: PascalCase (`UserCard`). Filename: kebab-case (`user-card.jsx`).
+- Props: plain JS destructuring (no TypeScript prop interfaces — project is JS).
 
 ```jsx
-// CORRECT — functional, typed props
-interface UserCardProps {
-  name: string;
-  email: string;
-}
-
-function UserCard({ name, email }: UserCardProps) {
+// CORRECT — functional component
+function UserCard({ name, email }) {
   return <div>{name} — {email}</div>;
 }
 
@@ -251,42 +248,52 @@ export default UserCard;
 window.env = { REACT_APP_API_URL: "https://api.example.com" };
 ```
 
-Access config in code:
-
-```javascript
-const baseURL = window.env?.REACT_APP_API_URL || 'http://localhost:3000';
-```
+Access config in code via `src/lib/http.js` (the project's shared fetch wrapper). Do not call `fetch()` directly in components or feature API modules — use the shared http client which handles `credentials: 'include'` and CSRF headers automatically.
 
 Do not use `process.env.REACT_APP_*` for the API URL — that value is baked into the bundle at build time and breaks multi-environment Docker images.
 
 ### 3.3 API Layer
 
-- All API calls live in `src/api/` modules (e.g., `src/api/auth.js`, `src/api/users.js`).
-- UI components are presentation-only. They call functions from `src/api/` and render results.
-- Never call `fetch()` or `axios` directly inside a component body. Extract to `src/api/`.
+- Feature API modules live in `src/features/<feature>/api.js` (e.g., `src/features/auth/api.js`).
+- Shared HTTP utilities live in `src/lib/http.js` and `src/lib/csrf.js`.
+- UI components are presentation-only. They call functions from feature `api.js` files and render results.
+- Never call `fetch()` directly inside a component body.
 
-```javascript
-// src/api/auth.js
-export async function login(email, password) {
-  const res = await fetch(`${window.env?.REACT_APP_API_URL}/auth/login`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  });
-  if (!res.ok) throw new Error(`Login failed: ${res.status}`);
-  return res.json();
-}
-```
+### 3.4 Forms
 
-### 3.4 Styling
+- Use `react-hook-form` with a `zod` schema for all forms.
+- Schema files live co-located with the feature: `src/features/<feature>/schema.js`.
+- Use `@hookform/resolvers/zod` as the resolver.
+- Display field errors via the shared `<FormError>` component (`src/components/ui/form-error.jsx`).
 
-- Mobile-first: base styles for small screens, override upward with media queries.
-- CSS modules (`.module.css`) preferred for component-scoped styles.
-- If plain CSS: use BEM naming — `.user-card__name`, `.user-card--active`.
-- Do not use inline styles for layout.
+### 3.5 Routing
 
-### 3.5 Accessibility Basics
+- All routes are defined in `src/router.jsx` using `createBrowserRouter` from react-router-dom v7.
+- Protected routes are wrapped with `<ProtectedRoute>` (`src/routes/protected-route.jsx`), which reads auth state from `AuthContext` and redirects to `/login` when unauthenticated.
+- Auth state is provided by `AuthContext` (`src/features/auth/auth-context.jsx`); do not read cookies directly in components.
+
+### 3.6 i18n
+
+- All UI strings MUST use the `useTranslation` hook — never hardcode display strings in JSX.
+- Namespaces: `common` (shared labels, actions) and `auth` (auth flow strings).
+- Locale files: `src/i18n/locales/{en,vi}/{common,auth}.json`.
+- Key convention: `namespace:section.key` (e.g., `auth:login.submitButton`).
+- Mirror the backend's i18n key structure where UI strings correspond to API error messages.
+
+### 3.7 Styling
+
+- Use **Tailwind v4 utility classes** (imported via `@tailwindcss/vite` plugin — no `tailwind.config.js` required).
+- Mobile-first: base classes for small screens, `sm:`, `md:`, `lg:` prefixes to scale up.
+- Do not use inline styles for layout. Do not use CSS modules (Tailwind replaces them).
+
+### 3.8 Testing
+
+- Tests run via **vitest** inside the Docker container: `docker compose exec frontend npm test`.
+- Test files are co-located with the source: `*.test.jsx` or `*.test.js`.
+- Use `@testing-library/react` and `@testing-library/user-event` for component tests.
+- Test setup file: `src/test/setup.js`.
+
+### 3.9 Accessibility Basics
 
 - Interactive elements MUST be focusable and operable by keyboard.
 - Images MUST have meaningful `alt` text (or `alt=""` for decorative images).

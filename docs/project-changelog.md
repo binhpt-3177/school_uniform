@@ -13,6 +13,33 @@ Versioning follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.ht
 
 ---
 
+## [0.2.0] — 2026-05-22
+
+Frontend foundation rebuilt from scratch; login feature shipped.
+
+### Added
+
+**Frontend (React 19 + Vite + Tailwind v4)**
+
+- React 19 application rebuilt with Vite 8 (`@vitejs/plugin-react`), replacing Create React App
+- Tailwind CSS v4 integrated via `@tailwindcss/vite` plugin (no `tailwind.config.js`)
+- `react-router-dom` v7 with `createBrowserRouter`; client-side SPA routing
+- `AuthContext` + `ProtectedRoute` UX guard (`frontend/src/features/auth/auth-context.jsx`, `frontend/src/routes/protected-route.jsx`)
+- Login page wired to `POST /auth/login`; HttpOnly cookie auth, CSRF double-submit pattern (`frontend/src/features/auth/`)
+- `react-hook-form` + `zod` schema validation on the login form (`frontend/src/features/auth/schema.js`)
+- `react-i18next` i18n with `vi` (default) and `en` locales; namespaces `common` + `auth` mirroring backend (`frontend/src/i18n/`)
+- Shared HTTP client with `credentials: include` and automatic CSRF header injection (`frontend/src/lib/http.js`, `frontend/src/lib/csrf.js`)
+- Primitive UI component library: `Button`, `Input`, `Label`, `FormError` (`frontend/src/components/ui/`)
+- 84 vitest tests across 5 test files; all passing in container via `npm test`
+
+### Removed
+
+- Bootstrap 4 CDN dependency
+- CRA entry files: `App.jsx`, `App.css`, `index.js`, `reportWebVitals.js`
+- Bezkoder fetch demo code
+
+---
+
 ## [0.1.0] — 2026-05-22
 
 Initial project baseline. Commits: `6fbaa06 Base BE`, `0fdd395 Init project`, `070020d pull 1`.
@@ -71,5 +98,6 @@ Documentation added in this session is included in this release.
 
 ---
 
-[Unreleased]: https://github.com/your-org/school-uniform/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/your-org/school-uniform/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/your-org/school-uniform/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/your-org/school-uniform/releases/tag/v0.1.0

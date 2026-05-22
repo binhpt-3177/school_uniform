@@ -16,7 +16,7 @@
 
 ## Breakpoints
 
-Use these breakpoints consistently. They map directly to Tailwind CSS defaults (if adopted) or custom CSS custom properties.
+Use these breakpoints consistently. They map directly to Tailwind CSS v4 defaults (now the project standard) or custom CSS custom properties.
 
 | Token | Min width (px) | Use case |
 |-------|---------------|----------|
@@ -206,8 +206,8 @@ For mobile web and PWA use cases, apply `padding: env(safe-area-inset-top) env(s
 
 - Default locale: **`vi`** (Vietnamese), matching `DEFAULT_LOCALE` env on the backend.
 - Supported locales: `vi`, `en`.
-- Never hardcode display strings in JSX. Use the i18n library's `t()` function with a key.
-- Keys are structured: `module.component.label` (e.g., `auth.login.submitButton`).
+- Never hardcode display strings in JSX. Use `react-i18next`'s `useTranslation` hook: `const { t } = useTranslation('namespace')`.
+- Keys are structured: `section.key` within a namespace (e.g., `useTranslation('auth')` → `t('login.submitButton')`).
 - Mirror the backend's translation key namespace where UI strings correspond to API messages (e.g., validation errors).
 - Number, date, and currency formatting must use `Intl` APIs with the active locale.
 - Text expansion: Vietnamese strings can be 20–40% longer than their English equivalents — design layouts to accommodate this without overflow.

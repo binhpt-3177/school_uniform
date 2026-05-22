@@ -35,7 +35,7 @@ This document tracks project phases, scope, and exit criteria. Phase 0 reflects 
 - TypeORM + MySQL 8 with migrations; `synchronize: true` blocked by pre-commit script
 - Health endpoint
 - Seed command
-- React 17 (CRA) frontend shell — bootstrapped, no domain screens yet
+- React 19 + Vite + Tailwind v4 frontend — login screen, auth context, ProtectedRoute, i18n (vi/en), react-hook-form + zod validation, HttpOnly cookie + CSRF double-submit auth; 84 vitest tests passing
 - Docker Compose: `mysql` (port 3306) + `mysql_test` (port 3307) services
 - Contributing guide, code standards, security guidelines, design guidelines, system architecture, codebase summary, getting started docs
 
@@ -84,7 +84,7 @@ TBD (Phase 1 team assignment).
 
 ### Scope
 
-- **Login page:** email + password form, redirect to intended route after login, error states
+- **Login page:** email + password form, redirect to intended route after login, error states *(form + auth flow shipped in v0.2.0; password reset, remember-me remain here)*
 - **Register page:** form with client-side + server-side validation, success redirect
 - **Profile page:** display user info, edit display name, change password flow
 - **Password reset flow:** forgot-password email trigger → token link → new-password form

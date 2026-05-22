@@ -119,6 +119,7 @@ This document maps the **OWASP Top 10 (2021)** to controls already implemented i
 - Refresh tokens are stored and **rotated on every use** (`backend/src/auth/entities/refresh-token.entity.ts`, `backend/src/auth/auth.service.ts`). Reuse of an old refresh token must invalidate the session.
 - Rate limiting is enforced globally via `@nestjs/throttler` (60 requests / 60 seconds by default, configured in `backend/src/app.module.ts`).
 - **CSRF guard** (`backend/src/common/guards/csrf.guard.ts`) protects cookie-authenticated mutating requests (POST, PUT, PATCH, DELETE). Endpoints that should skip CSRF (e.g., webhooks) must use `@SkipCsrf()` (`backend/src/common/decorators/skip-csrf.decorator.ts`) with documented justification.
+- The frontend implements the client-side half of double-submit CSRF: `frontend/src/lib/csrf.js` reads the `csrf_token` cookie and `frontend/src/lib/http.js` injects it as the `X-CSRF-Token` header on all write requests. Tokens are never stored in `localStorage`/`sessionStorage`.
 
 **Contributor must-do:**
 - Do not lower the throttler limits without a concrete reason and approval.

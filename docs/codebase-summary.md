@@ -9,7 +9,7 @@ For architecture diagrams and data flow, see [system-architecture.md](system-arc
 | `mysql` | `mysql:8.0` | `3306` | Primary application database |
 | `mysql_test` | `mysql:8.0` | `3307` | Isolated database for integration tests |
 | `backend` | `./backend` (target: `dev`) | `3000` | NestJS 11 REST API |
-| `frontend` | `./frontend/dev.Dockerfile` | `5000` | React 17 dev server |
+| `frontend` | `./frontend/dev.Dockerfile` | `5000` | React 19 + Vite dev server |
 
 `backend` depends on `mysql` (health-checked). `frontend` depends on `mysql` and `backend`.
 
@@ -66,14 +66,19 @@ Key entry points:
 
 ```
 frontend/src/
-├── index.js            # React DOM render entry point
-├── index.css           # Global styles
-├── App.js              # Root application component
-├── App.css             # App-level styles
-└── reportWebVitals.js  # CRA web vitals reporting hook
+├── index.jsx           # React DOM render entry point
+├── index.css           # Tailwind v4 base styles (via @tailwindcss/vite)
+├── app.jsx             # Root application component (router provider + auth context)
+├── router.jsx          # react-router-dom v7 route definitions
+├── lib/                # Shared utilities (http client, CSRF helpers)
+├── i18n/               # react-i18next setup + en/vi locales (namespaces: common, auth)
+├── components/ui/      # Primitive UI components (Button, Input, Label, FormError)
+├── features/auth/      # Auth feature slice (API, context, login form, schema, tests)
+├── pages/              # Page-level components (login.jsx, home.jsx)
+└── routes/             # Route guards (protected-route.jsx)
 ```
 
-The frontend is a minimal Create React App shell. At production build time, `entrypoint.sh` generates `/usr/share/nginx/html/env.js` which exposes `window.env.REACT_APP_API_URL` for runtime API URL injection without rebuild.
+Auth uses HttpOnly cookies (no JS-readable tokens); CSRF double-submit pattern mirrors the backend. At production build time, `entrypoint.sh` generates `/usr/share/nginx/html/env.js` which exposes `window.env.REACT_APP_API_URL` for runtime API URL injection without rebuild.
 
 ## Backend npm Scripts Reference
 

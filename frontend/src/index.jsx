@@ -1,18 +1,18 @@
+// i18n MUST initialize before any component that calls useTranslation renders,
+// so this import comes before everything React-related.
+import './i18n/index.js';
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './router.jsx';
 import './index.css';
-import App from './App.jsx';
-import reportWebVitals from './reportWebVitals';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
 
 root.render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>,
 );
-
-// Pass a function to log results (e.g. reportWebVitals(console.log))
-// or send to an analytics endpoint. See https://web.dev/vitals/
-reportWebVitals();

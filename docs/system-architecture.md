@@ -29,7 +29,7 @@ graph TD
     Browser["Browser\n(HTTP client)"]
 
     subgraph docker["docker-compose network"]
-        FE["frontend\nReact 17 + Nginx\n:5000"]
+        FE["frontend\nReact 19 + Vite/Nginx\n:5000"]
         BE["backend\nNestJS 11\n:3000"]
         DB["mysql\nMySQL 8.0\n:3306"]
         DBT["mysql_test\nMySQL 8.0\n:3307"]
@@ -53,7 +53,7 @@ graph TD
 
 | Layer | Technology | Container | Port | Purpose |
 |---|---|---|---|---|
-| Frontend | React 17 + CRA + Nginx | `frontend` | 5000 | SPA served as static files; runtime config injected by `entrypoint.sh` |
+| Frontend | React 19 + Vite + Tailwind v4 + Nginx | `frontend` | 5000 | SPA served as static files; runtime config injected by `entrypoint.sh` |
 | Backend | NestJS 11 + TypeORM 0.3 | `backend` | 3000 | REST API, auth, business logic |
 | Primary DB | MySQL 8.0 | `mysql` | 3306 | Application data |
 | Test DB | MySQL 8.0 | `mysql_test` | 3307 | Integration test isolation; not used in production paths |
