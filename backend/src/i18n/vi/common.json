@@ -1,0 +1,10 @@
+{
+  "success": "Thành công",
+  "errors": {
+    "internal": "Lỗi máy chủ nội bộ",
+    "validation": "Dữ liệu không hợp lệ",
+    "unauthorized": "Chưa xác thực",
+    "forbidden": "Không có quyền truy cập",
+    "not_found": "Không tìm thấy tài nguyên"
+  }
+}

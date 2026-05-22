@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+coverage-integration
+.git
+.gitignore
+.env*
+!.env.example
+*.log
+.DS_Store
+Dockerfile
+.dockerignore

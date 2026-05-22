@@ -1,47 +1,58 @@
 services:
   mysql:
-    image: mysql:5.7
-    restart: always
+    image: mysql:8.0
+    restart: unless-stopped
     env_file:
       - .env.mysql
     ports:
       - "3306:3306"
+    volumes:
+      - mysql-data-4:/var/lib/mysql
     networks:
       - app-network
-    volumes:
-      - mysql-data-3:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   mysql_test:
-    image: mysql:5.7
-    restart: always
+    image: mysql:8.0
+    restart: unless-stopped
     env_file:
       - .env.test.mysql
     ports:
       - "3307:3306"
+    volumes:
+      - mysql-data-test-4:/var/lib/mysql
     networks:
       - app-network
-    volumes:
-      - mysql-data-test:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      target: dev
+    env_file:
+      - .env.backend
     ports:
       - "3000:3000"
     volumes:
       - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
-    mem_limit: 2g
-    mem_reservation: 256m
+      - be_node_modules:/usr/src/app/node_modules
     working_dir: /usr/src/app
-    env_file:
-      - .env.backend
     depends_on:
-      - mysql
-    stdin_open: true
-    tty: true
-    command: sh
+      mysql:
+        condition: service_healthy
     networks:
       - app-network
+    command: ["npm", "run", "start:dev"]
+    tty: true
+    stdin_open: true
 
   frontend:
     build:
@@ -69,6 +80,7 @@ networks:
     driver: bridge
 
 volumes:
-  mysql-data-3:
-  mysql-data-test:
+  mysql-data-4:
+  mysql-data-test-4:
   fe_node_modules:
+  be_node_modules:

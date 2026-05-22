@@ -1,0 +1,10 @@
+{
+  "success": "OK",
+  "errors": {
+    "internal": "Internal server error",
+    "validation": "Validation failed",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Forbidden",
+    "not_found": "Resource not found"
+  }
+}
